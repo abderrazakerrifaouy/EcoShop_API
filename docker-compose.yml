@@ -1,0 +1,66 @@
+
+services:
+  php:
+    build: 
+      context: ./backEnd
+    container_name: php_server
+    ports:
+     - "8081:80"
+    volumes:
+      - ./backEnd/src:/var/www/html
+    depends_on:
+     - postgres 
+    networks:
+     - app-network
+  vue:
+    build:
+      context: ./frontEnd
+    container_name: vue_client
+    ports:
+      - "8080:5173"
+    volumes:
+      - ./frontEnd/app:/app
+      - /app/node_modules
+    command: npm run dev -- --host
+    depends_on:
+      - php
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:16
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: ecoshop
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+ 
+volumes:
+ postgres_data:
+networks:
+  app-network:
+    driver: bridge
+    
+    
+ 

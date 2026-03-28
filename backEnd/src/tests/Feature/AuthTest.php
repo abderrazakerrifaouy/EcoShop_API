@@ -24,7 +24,6 @@ test('user can login', function () {
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);
-
     // Then, attempt to login
     $response = $this->postJson('/api/login', [
         'email' => 'test@example.com',
